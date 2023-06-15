@@ -13,8 +13,7 @@ class SamplesThio extends StatefulWidget {
 }
 
 class _SamplesThioState extends State<SamplesThio> {
-  //final List<String> SamplesThioList = [];
-
+  
   Future getSamples(String sampleId) async {
     List<dynamic>? data;
 
@@ -50,7 +49,7 @@ class _SamplesThioState extends State<SamplesThio> {
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text('sample sini'),
+                    title: Text(snapshot.data[index]['test_id']), //ne tuka kepada yg betul
                     onTap: () {
                       Navigator.push(
                         context,

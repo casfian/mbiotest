@@ -12,7 +12,7 @@ class Sterility extends StatefulWidget {
 }
 
 class _SterilityState extends State<Sterility> {
-  final List<String> clientNames = [];
+  //final List<String> clientNames = [];
 
   Future getClients() async {
     List<dynamic>? data;
@@ -46,7 +46,7 @@ class _SterilityState extends State<Sterility> {
             if (snapshot.connectionState == ConnectionState.done) {
               // show data
               return ListView.builder(
-                itemCount: clientNames.length,
+                itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(10.0),
