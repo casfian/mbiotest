@@ -1,21 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:mbiotest/dashboard.dart';
 
+import 'dart:convert' as convert;
+import 'package:http/http.dart' as http;
+
 class Login extends StatefulWidget {
-  const Login({super.key});
+  const Login({Key? key}) : super(key: key);
 
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  // Login function
+  Future<Map<String, dynamic>> postLogin(
+      String username, String password) async {
+    var url =
+        Uri.parse('http://etas.nuclearmalaysia.gov.my/api/userloginapi.php');
+
+    var body = {'m': username, 'p': password};
+
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: convert.jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      print('Success Login');
+      var jsonResponse = convert.jsonDecode(response.body);
+      print(jsonResponse);
+      return jsonResponse;
+    } else {
+      print('Login Request failed with status: ${response.statusCode}.');
+      return {}; // Return an empty map in case of failure
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Login'),
@@ -46,45 +74,47 @@ class _LoginState extends State<Login> {
                 ),
                 const SizedBox(height: 20.0),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (emailController.text.isEmpty ||
-                       passwordController.text.isEmpty ) {
-                        
-                        AlertDialog alert = AlertDialog(
-                          title: const Text('Error'),
-                          content: const Text('Email dan Password tak boleh kosong!'),
-                          actions: [
-                            TextButton(onPressed: () {
+                        passwordController.text.isEmpty) {
+                      AlertDialog alert = AlertDialog(
+                        title: const Text('Error'),
+                        content:
+                            const Text('Email dan Password tak boleh kosong!'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
                               Navigator.pop(context);
-                            }, child: const Text('OK'))
-                          ],
-                        );
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
 
-                        showDialog(context: context, builder: (context) {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
                           return alert;
-                        } );
-                    } 
-                     else {
+                        },
+                      );
+                    } else {
+                      Map<String, dynamic> status = await postLogin(
+                        emailController.text,
+                        passwordController.text,
+                      );
 
-                      // send email and password to server
-                      //if server send a status success then baru boleh masuk
-                      //senttoServer();
-                      //if (status == '200') {
-
-                        // Perform login logic here
+                      if (status['success'] == true) {
+                        // Go to the next page
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const Dashboard()),
+                          MaterialPageRoute(
+                              builder: (context) => const Dashboard()),
                         );
-
-                      // } else {
-                      //   //error
-                      // }
-
-                      
-
+                      } else {
+                        // Go to error page or show a popup
+                        print('Error');
+                      }
                     }
-                    
                   },
                   child: const Text('Log Masuk'),
                 ),

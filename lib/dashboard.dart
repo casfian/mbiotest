@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mbiotest/login.dart';
 import 'complete/complete.dart';
 import 'incomplete.dart';
 
@@ -19,9 +20,20 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Dashboard'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Login()),
+                  );
+                },
+                icon: const Icon(Icons.logout))
+          ],
         ),
         body: _pages[_currentIndex],
         bottomNavigationBar: BottomNavigationBar(
